@@ -1,21 +1,28 @@
 require 'open-uri'
 require 'nokogiri'
+require_relative 'item'
 
 class Parser
-  def parse_items(url)
-    html = URI.open(url) { |result| result.read }
+  def initialize(url)
+    @url = url
+  end
+
+  def parse_items()
+    html = URI.open(@url) { |result| result.read }
 
     document = Nokogiri::HTML(html)
     content = document.css('li.catalog-grid__cell')
 
-    data =
-      document.css('li.catalog-grid__cell').map do |item|
-        {
-          code: item.css('div.g-id').text.strip,
-          name: item.css('.goods-tile__heading.ng-star-inserted').text.strip,
-          price: item.css('.goods-tile__price').text.strip
-        }
+    document.css('li.catalog-grid__cell').map do |data_item|
+      initialize_item(data_item)
     end
-    return data
+  end
+
+  def initialize_item(data_item)
+    Item.new(
+      data_item.css('div.g-id').text.strip,
+      data_item.css('.goods-tile__heading.ng-star-inserted').text.strip,
+      data_item.css('.goods-tile__price').text.strip
+    )
   end
 end

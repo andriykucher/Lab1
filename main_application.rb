@@ -1,11 +1,26 @@
+require_relative 'cart'
 
-require_relative 'cart.rb'
-require_relative 'parser.rb'
+require_relative 'Rozetka\Mobile\mobile_phone_parser'
 
+require_relative 'Rozetka\Kitchen\refrigerator_parser'
+
+# A main entry point
 class MainApplication
-	parser = Parser.new
-	data = parser.parse_items('https://rozetka.com.ua/ua/mobile-phones/c80003/')
-	cart = Cart.new
-	cart.save_to_json("output.json", data)
-	cart.save_to_cvs("output.csv", data)
+  parser = MobilePhoneParser.new
+
+  data = parser.parse_items
+
+  cart = Cart.new
+
+  cart.save_to_json('Rozetka\Mobile\mobile_output.json', data)
+
+  cart.save_to_cvs('Rozetka\Mobile\mobile_output.csv', data)
+
+  parser = RefrigeratorParser.new
+
+  data = parser.parse_items
+
+  cart.save_to_json('Rozetka\Kitchen\refrigerator_output.json', data)
+
+  cart.save_to_cvs('Rozetka\Kitchen\refrigerator_output.csv', data)
 end
